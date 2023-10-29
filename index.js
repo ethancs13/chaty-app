@@ -13,19 +13,18 @@ wss.on('connection', function (ws) {
 
     ws.on('message', function (data) {
         let jsonData = JSON.parse(data);
-
         if (jsonData.name) {
             console.log(`${jsonData.name} has connected.`);
             ws.name = jsonData.name
             wss.clients.forEach(function (client) {
+                if (client.readyState === WebSocket.OPEN && ws.name !== client.name) {
 
-                if (client.readState === WebSocket.OPEN && ws.name !== client.name) {
                     client.send( JSON.stringify({ announcement: `${ws.name} has joined.` }))
                 }
             })
         } else {
             wss.clients.forEach( function (client) {
-                if (client.readState === WebSocket.OPEN && ws.name !== client.name) {
+                if (client.readyState === WebSocket.OPEN && ws.name !== client.name) {
                     client.send( JSON.stringify({ name: ws.name, message: jsonData.message }))
                 }
             })

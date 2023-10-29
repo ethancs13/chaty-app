@@ -3,21 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <!-- Google Fonts Import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Agbalumo&family=Roboto:ital@0;1&display=swap" rel="stylesheet">
+    <title>Chati - Chat Application</title>
 </head>
 <body>
-    <h1>Hello World</h1>
-    <input id='name'>
-    <button onclick="connect();">Connect</button>
-    <input id="message">
-    <button onclick="sendMessage();">Send Message</button>
 
+    <h1>Chati</h1>
 
+    <!-- <div class="textBox">
+        <p>test</p>
+        <img src="https://www.freeiconspng.com/uploads/text-box-png-27.png" width="100" alt="Clipart PNG Text Box" />
+    </div> -->
 
-    <span id="messages"></span>
+    <section class="wrapper">
+        <div>
+            <input id='name'>
+            <button onclick="connect();">Connect</button>
+        </div>
+        <div>
+            <input id="message">
+            <button onclick="sendMessage();">Send Message</button>
+        </div>
+    </section>
+
+    <div class="chatBox-wrapper">
+        <section class="chat-wrapper">
+            <span id="messages" style="height:400px">
+            </span> 
+        </section>
+    </div>
+
 </body>
 
+<style>
+    html, body { margin: 0; height: 100%;}
+
+    body h1 {
+        font-family: 'Agbalumo', serif;
+        margin: 0;
+        padding: 0 5px;
+    }
+
+    #name, #message {
+        margin: 10px;
+    }
+
+    button {
+        margin: 8px;
+        padding: 1px;
+    }
+
+    .left, .right { display: flex; }
+    .left { justify-content: flex-start; }
+    .right { justify-content: flex-end; }
+
+    .wrapper {
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        align-items: flex-start;
+        margin: 10px 20px;
+    }
+    .wrapper div {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #messages {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: flex-end;
+        /* margin: 10px 0; */
+        /* padding: 20px; */
+    }
+    #messages div {
+        padding: 10px;
+        border: solid black 0.3px;
+
+    }
+    .chat-wrapper {
+        width: 100%;
+        
+    }
+    .chatBox-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        border: solid black 0.5px;
+        margin: 10px 20px;
+    }
+    /* .textBox p {
+        position: absolute;
+        margin-left: 20px;
+    } */
+
+
+</style>
+
 <script>
+    
+    
     let socket;
 
     function connect() {
@@ -34,14 +123,26 @@
             let jsonData = JSON.parse(event.data)
 
             if (jsonData.message) {
-                addMessageToPage(`${jsonData.name}: ${jsonData.message}`)
+                addMessageToPage(`${jsonData.name}: ${jsonData.message}`, `${jsonData.name}`)
             } else {
-                addMessageToPage(`${jsonData.announcement}`)
+                addMessageToPage(`${jsonData.announcement}`, `test`)
             }
         })
     }
 
     function sendMessage() {
+        let messagesContainer = document.querySelector('#messages')
+
+        // let height = (messagesContainer.childNodes.length * 71)
+        // if (height > 300) {
+
+        // } else {
+        //     height += 200
+        // }
+
+        // let main_wrapper = document.querySelector('.chatBox-wrapper')
+        // main_wrapper.setAttribute('style','height:' + height + 'px')
+
         let message = document.getElementById('message').value;
 
         socket.send(JSON.stringify({message}))
@@ -49,10 +150,24 @@
         addMessageToPage(`Me: ${message}`)
     }
 
-    function addMessageToPage(message) {
+    function addMessageToPage(message, name) {
+        let container = document.createElement('div')
+        if (name) {
+            container.classList.add('left')
+        } else {
+            container.classList.add('right')
+        }
+        let image = document.createElement('img')
+        image.src = 'https://www.freeiconspng.com/uploads/text-box-png-27.png'
+        image.width = '200'
+
         let textMessage = document.createElement('p');
         textMessage.appendChild(document.createTextNode(message));
-        document.getElementById('messages').appendChild(textMessage);
+
+        // container.appendChild(image)
+        container.appendChild(textMessage)
+
+        document.getElementById('messages').appendChild(container);
     }
 </script>
 </html>
